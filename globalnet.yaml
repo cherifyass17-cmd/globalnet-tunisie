@@ -1,0 +1,116 @@
+---
+# OFFERS SERVICE
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: offers-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: offers
+  template:
+    metadata:
+      labels:
+        app: offers
+    spec:
+      containers:
+      - name: offers
+        image: offers-service:latest
+        ports:
+        - containerPort: 5000
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: offers-service
+spec:
+  selector:
+    app: offers
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
+
+---
+# AUTH SERVICE
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - name: auth
+        image: auth-service:latest
+        ports:
+        - containerPort: 5001
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+  type: ClusterIP
+
+---
+# CONTACT SERVICE
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contact-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: contact
+  template:
+    metadata:
+      labels:
+        app: contact
+    spec:
+      containers:
+      - name: contact
+        image: contact-service:latest
+        ports:
+        - containerPort: 5002
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contact-service
+spec:
+  selector:
+    app: contact
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+  type: ClusterIP
