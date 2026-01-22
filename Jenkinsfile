@@ -8,6 +8,13 @@ pipeline {
     }
 
     stages {
+
+        stage('Clean Workspace') {
+            steps {
+                deleteDir() // supprime tout le contenu du workspace avant le build
+            }
+        }
+
         stage('Build & Push Offers') {
             steps {
                 script {
@@ -50,3 +57,4 @@ pipeline {
         }
     }
 }
+
