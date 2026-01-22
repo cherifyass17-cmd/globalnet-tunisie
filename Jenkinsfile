@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_HUB_USERNAME = 'yasminech123'
         DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
-        KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
+        KUBECONFIG_CREDENTIALS_ID = 'kubeconfig' // L'ID du secret que tu as créé
     }
 
     stages {
@@ -43,9 +43,15 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'mkdir -p ~/.kube'
-                sh 'echo "$KUBECONFIG_CONTENT" > ~/.kube/config'
-                sh 'kubectl apply --validate=false -f k8s/'
+                withCredentials([string(credentialsId: env.KUBECONFIG_CREDENTIALS_ID, variable: 'KUBECONFIG_CONTENT')]) {
+                    script {
+                        // Crée un kubeconfig temporaire dans le workspace
+                        writeFile file: 'kubeconfig_temp', text: KUBECONFIG_CONTENT
+
+                        // Applique les manifests Kubernetes avec ce kubeconfig
+                        sh 'kubectl --kubeconfig=kubeconfig_temp apply --validate=false -f k8s/'
+                    }
+                }
             }
         }
     }
