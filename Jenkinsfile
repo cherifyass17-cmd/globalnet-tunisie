@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_HUB_USERNAME = 'yasminech123'
-        DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
+        DOCKER_HUB_CREDENTIALS_ID = 'd0f22c2b-a130-480c-bc88-419c2be3f6a1'
         KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
     }
 
