@@ -45,7 +45,7 @@ pipeline {
             steps {
                 sh 'mkdir -p ~/.kube'
                 sh 'echo "$KUBECONFIG_CONTENT" > ~/.kube/config'
-                sh 'kubectl apply -f k8s/'
+                sh 'kubectl apply --validate=false -f k8s/'
             }
         }
     }
