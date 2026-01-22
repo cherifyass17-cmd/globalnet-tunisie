@@ -4,23 +4,16 @@ pipeline {
     environment {
         DOCKER_HUB_USERNAME = 'yasminech123'
         DOCKER_HUB_CREDENTIALS_ID = 'docker-hub-credentials'
-        KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
     }
 
     stages {
 
-        stage('Clean Workspace') {
-            steps {
-                deleteDir() // supprime tout le contenu du workspace avant le build
-            }
-        }
-
         stage('Build & Push Offers') {
             steps {
                 script {
-                    docker.build("${env.DOCKER_HUB_USERNAME}/offers-service:latest", "./offers")
-                    docker.withRegistry('https://registry.hub.docker.com', env.DOCKER_HUB_CREDENTIALS_ID) {
-                        docker.image("${env.DOCKER_HUB_USERNAME}/offers-service:latest").push()
+                    docker.build("${DOCKER_HUB_USERNAME}/offers-service:latest", "./offers")
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS_ID) {
+                        docker.image("${DOCKER_HUB_USERNAME}/offers-service:latest").push()
                     }
                 }
             }
@@ -29,9 +22,9 @@ pipeline {
         stage('Build & Push Auth') {
             steps {
                 script {
-                    docker.build("${env.DOCKER_HUB_USERNAME}/auth-service:latest", "./auth")
-                    docker.withRegistry('https://registry.hub.docker.com', env.DOCKER_HUB_CREDENTIALS_ID) {
-                        docker.image("${env.DOCKER_HUB_USERNAME}/auth-service:latest").push()
+                    docker.build("${DOCKER_HUB_USERNAME}/auth-service:latest", "./auth")
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS_ID) {
+                        docker.image("${DOCKER_HUB_USERNAME}/auth-service:latest").push()
                     }
                 }
             }
@@ -40,9 +33,9 @@ pipeline {
         stage('Build & Push Contact') {
             steps {
                 script {
-                    docker.build("${env.DOCKER_HUB_USERNAME}/contact-service:latest", "./contact")
-                    docker.withRegistry('https://registry.hub.docker.com', env.DOCKER_HUB_CREDENTIALS_ID) {
-                        docker.image("${env.DOCKER_HUB_USERNAME}/contact-service:latest").push()
+                    docker.build("${DOCKER_HUB_USERNAME}/contact-service:latest", "./contact")
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS_ID) {
+                        docker.image("${DOCKER_HUB_USERNAME}/contact-service:latest").push()
                     }
                 }
             }
@@ -50,11 +43,13 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'mkdir -p ~/.kube'
-                sh 'echo "$KUBECONFIG_CONTENT" > ~/.kube/config'
-                sh 'kubectl apply --validate=false -f k8s/'
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        export KUBECONFIG=$KUBECONFIG
+                        kubectl apply --validate=false -f k8s/
+                    '''
+                }
             }
         }
     }
 }
-
