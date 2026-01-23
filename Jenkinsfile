@@ -43,7 +43,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                withCredentials([file(credentialsId: 'kubeconfigg', variable: 'KUBECONFIG')]) {
                     sh '''
                         export KUBECONFIG=$KUBECONFIG
                         kubectl apply --validate=false -f k8s/
@@ -53,3 +53,4 @@ pipeline {
         }
     }
 }
+
