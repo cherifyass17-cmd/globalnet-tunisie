@@ -1,115 +1,34 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GlobalNet Tunisie - Contact</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 30px 20px;
-      color: #333;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    h1 {
-      color: #e74c3c;
-      text-align: center;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    textarea {
-      height: 120px;
-      resize: vertical;
-    }
-    button {
-      background: #3498db;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background: #2980b9;
-    }
-    .message {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 6px;
-      text-align: center;
-    }
-    .success { background: #d4edda; color: #155724; }
-    .error { background: #f8d7da; color: #721c24; }
-  </style>
+<meta charset="UTF-8">
+<title>Contact</title>
 </head>
 <body>
-  <div class="container">
-    <h1>📬 Support Client GlobalNet Tunisie</h1>
-    <form id="contactForm">
-      <div class="form-group">
-        <label for="email">Votre email</label>
-        <input type="email" id="email" name="email" required />
-      </div>
-      <div class="form-group">
-        <label for="message">Votre message</label>
-        <textarea id="message" name="message" placeholder="Décrivez votre problème..." required></textarea>
-      </div>
-      <button type="submit">Envoyer</button>
-    </form>
-    <div id="response"></div>
-  </div>
+<h2>📬 Contact</h2>
 
-  <script>
-    document.getElementById('contactForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const responseDiv = document.getElementById('response');
-      const data = {
-        email: document.getElementById('email').value,
-        message: document.getElementById('message').value
-      };
+<form id="form">
+<input placeholder="Email" id="email"><br><br>
+<textarea id="message"></textarea><br><br>
+<button>Envoyer</button>
+</form>
 
-      try {
-        const res = await fetch('http://192.168.222.10:30003/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+<p id="msg"></p>
+<a href="/">⬅ Retour</a>
 
-        if (res.ok) {
-          responseDiv.className = 'message success';
-          responseDiv.textContent = '✅ Votre message a été reçu ! Notre équipe vous contactera bientôt.';
-          document.getElementById('contactForm').reset();
-        } else {
-          throw new Error('Erreur serveur');
-        }
-      } catch (err) {
-        responseDiv.className = 'message error';
-        responseDiv.innerHTML = '❌ Impossible d’envoyer le message.<br>Vérifiez que le service est accessible sur http://192.168.222.10:30003';
-      }
-    });
-  </script>
+<script>
+form.onsubmit = async e => {
+  e.preventDefault();
+  const res = await fetch("http://192.168.222.10:30003/contact", {
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      email:email.value,
+      message:message.value
+    })
+  });
+  msg.innerText = res.ok ? "✅ Envoyé" : "❌ Erreur";
+};
+</script>
 </body>
 </html>
