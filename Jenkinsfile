@@ -41,6 +41,17 @@ pipeline {
             }
         }
 
+        stage('Build & Push Web-UI') {
+            steps {
+                script {
+                    docker.build("${DOCKER_HUB_USERNAME}/web-ui:latest", "./web-ui")
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS_ID) {
+                        docker.image("${DOCKER_HUB_USERNAME}/web-ui:latest").push()
+                    }
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfigg', variable: 'KUBECONFIG')]) {
@@ -53,4 +64,5 @@ pipeline {
         }
     }
 }
+
 
