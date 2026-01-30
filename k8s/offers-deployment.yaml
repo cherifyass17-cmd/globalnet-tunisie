@@ -6,32 +6,36 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: offers
+      app: globalnet
+      service: offers
   template:
     metadata:
       labels:
-        app: offers
+        app: globalnet
+        service: offers
     spec:
       containers:
-      - name: offers
-        image: yasminech123/offers-service:latest
-        ports:
-        - containerPort: 5000
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
+        - name: offers
+          image: yasminech123/offers-service:latest
+          ports:
+            - containerPort: 5000
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: offers-service
+  labels:
+    app: globalnet
+    service: offers
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "5000"
+    prometheus.io/path: "/metrics"
 spec:
   selector:
-    app: offers
+    app: globalnet
+    service: offers
   ports:
-    - protocol: TCP
+    - name: http
       port: 5000
       targetPort: 5000
-      nodePort: 30001
-  type: NodePort

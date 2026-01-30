@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Authentification</title>
+</head>
+<body>
+  <h1>Connexion</h1>
+  <input type="text" id="username" placeholder="Nom utilisateur">
+  <input type="password" id="password" placeholder="Mot de passe">
+  <button onclick="login()">Se connecter</button>
+  <p id="result"></p>
+  <button onclick="location.href='http://localhost:5000/offers'">Retour aux offres</button>
+
+  <script>
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/auth/api', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({username, password})
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('result').innerText = data.success ? "✅ Connecté !" : "❌ Échec";
+      });
+    }
+  </script>
+</body>
+</html>

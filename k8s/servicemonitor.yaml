@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: globalnet-services
+  labels:
+    release: prometheus  # ← IMPORTANT : garde ce label pour Prometheus Operator
+spec:
+  namespaceSelector:
+    matchNames:
+      - default  # ← Cible explicitement ton namespace
+  selector:
+    matchLabels:
+      app: globalnet  # ← Matche tous tes Services
+  endpoints:
+    - port: http      # ← NOM du port (pas le numéro !)
+      path: /metrics
+      interval: 15s

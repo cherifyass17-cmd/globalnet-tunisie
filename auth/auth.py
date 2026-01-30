@@ -1,14 +1,22 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS 
+from flask import Flask, render_template, Response
+from flask_cors import CORS
+from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/login", methods=["POST"])
-def login():
-    data = request.get_json()
-    if data.get("user") == "client" and data.get("pass") == "globalnet2026":
-        return jsonify({"status": "success"})
-    return jsonify({"status": "fail"}), 401
+metrics = PrometheusMetrics(app)
+metrics.info("contact_service", "Contact service metrics")
+
+@app.route("/contact")
+def contact_page():
+    return render_template("contact.html")
+
+@app.route("/metrics")
+def metrics_endpoint():
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=5002)
+

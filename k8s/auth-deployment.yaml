@@ -6,32 +6,36 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: auth
+      app: globalnet
+      service: auth
   template:
     metadata:
       labels:
-        app: auth
+        app: globalnet
+        service: auth
     spec:
       containers:
-      - name: auth
-        image: yasminech123/auth-service:latest
-        ports:
-        - containerPort: 5001
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
+        - name: auth
+          image: yasminech123/auth-service:latest
+          ports:
+            - containerPort: 5001
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: auth-service
+  labels:
+    app: globalnet
+    service: auth
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "5001"
+    prometheus.io/path: "/metrics"
 spec:
   selector:
-    app: auth
+    app: globalnet
+    service: auth
   ports:
-    - protocol: TCP
+    - name: http
       port: 5001
       targetPort: 5001
-      nodePort: 30002
-  type: NodePort
